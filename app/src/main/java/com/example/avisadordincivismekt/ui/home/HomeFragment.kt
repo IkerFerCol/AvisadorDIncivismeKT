@@ -3,8 +3,11 @@ package com.example.avisadordincivismekt.ui.home
 import android.Manifest
 import android.content.pm.PackageManager
 import android.health.connect.datatypes.ExerciseRoute
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +22,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.avisadordincivismekt.databinding.FragmentHomeBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.math.log
 
 
 class HomeFragment : Fragment() {
@@ -28,10 +35,7 @@ class HomeFragment : Fragment() {
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private var mLastLocation: Location? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,26 +48,17 @@ class HomeFragment : Fragment() {
         locationPermissionRequest = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
             val fineLocationGranted = result[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
             val coarseLocationGranted = result[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
-            Log.d("XXX", "Hola")
+            Log.d("XXX", "Permisos concedidos")
 
             if (fineLocationGranted || coarseLocationGranted) {
-
                 getLocation()
             } else {
                 Toast.makeText(requireContext(), "No se conceden permisos", Toast.LENGTH_SHORT).show()
             }
         }
 
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-        val textView: TextView = binding.localitzacio
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
 
         binding.buttonLocation.setOnClickListener {
             getLocation()
@@ -87,26 +82,66 @@ class HomeFragment : Fragment() {
                 )
             )
         } else {
-            getLastLocation()
-        }
-    }
+            mFusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
+                if (location != null) {
+                    mLastLocation = location
 
-    private fun getLastLocation() {
-        mFusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
-        if (location != null) {
-                mLastLocation = location
-            binding.localitzacio.text = String.format(
-                "Latitud: %.4f \n Longitud: %.4f\n Hora: %1\$tT",
-                mLastLocation?.latitude,
-                mLastLocation?.longitude,
-                mLastLocation?.time
-            )
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+                    val time = location.time
 
-        } else {
-                binding.localitzacio.text = "Sin localización conocida"
+
+                    val dateFormat = SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault())
+                    val formattedTime = dateFormat.format(Date(time))
+
+
+                    binding.localitzacio.text = String.format(
+                        "Latitud: %.4f \n Longitud: %.4f\n Hora: %s",
+                        latitude,
+                        longitude,
+                        formattedTime
+                    )
+
+
+                    fetchAddress(latitude, longitude)
+
+                } else {
+                    binding.localitzacio.text = "Sin localización conocida"
+                }
             }
         }
     }
+
+    private fun fetchAddress(latitude: Double, longitude: Double) {
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        var addresses: List<Address>? = null
+        var resultMessage = ""
+
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1)
+
+            if (!addresses.isNullOrEmpty()) {
+                val address = addresses[0]
+
+                val addressParts = ArrayList<String>()
+
+                for (i in 0..address.maxAddressLineIndex) {
+                    addressParts.add(address.getAddressLine(i))
+                }
+
+                resultMessage = addressParts.joinToString("\n")
+            } else {
+                resultMessage = "Direcció no disponible"
+            }
+        } catch (e: Exception) {
+            Log.e("fetchAddress", "Error al obtenir la direcció", e)
+            resultMessage = "Error al obtenir la direcció"
+        }
+
+        binding.localitzacio.text = resultMessage
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
