@@ -2,7 +2,8 @@ package com.example.avisadordincivismekt.ui.home
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.health.connect.datatypes.ExerciseRoute.Location
+import android.health.connect.datatypes.ExerciseRoute
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,12 +20,13 @@ import com.example.avisadordincivismekt.databinding.FragmentHomeBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
+
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private var locationPermissionRequest: ActivityResultLauncher<Array<String>>? = null
     private var mFusedLocationClient: FusedLocationProviderClient? = null
-    private val mLastLocation: Location? = null
+    private var mLastLocation: Location? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -85,13 +87,25 @@ class HomeFragment : Fragment() {
                 )
             )
         } else {
-            Toast.makeText(requireContext(), "getLocation: permissions granted", Toast.LENGTH_SHORT)
-                .show()
+            getLastLocation()
         }
     }
 
     private fun getLastLocation() {
+        mFusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
+        if (location != null) {
+                mLastLocation = location
+            binding.localitzacio.text = String.format(
+                "Latitud: %.4f \n Longitud: %.4f\n Hora: %1\$tT",
+                mLastLocation?.latitude,
+                mLastLocation?.longitude,
+                mLastLocation?.time
+            )
 
+        } else {
+                binding.localitzacio.text = "Sin localización conocida"
+            }
+        }
     }
 
     override fun onDestroyView() {
