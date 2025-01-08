@@ -18,6 +18,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.avisadordincivismekt.databinding.FragmentHomeBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -45,6 +46,8 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        val homeViewModelShared = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
