@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "560253626390",
+    "project_id": "avisadord-incivismektikerfer",
+    "storage_bucket": "avisadord-incivismektikerfer.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:560253626390:android:de10c6bd4d34bd9bd72d37",
+        "android_client_info": {
+          "package_name": "com.example.avisadordincivismekt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsbswEGrlur3g50P05-y-Fdf96dXLBx7g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
