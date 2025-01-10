@@ -1,20 +1,27 @@
 package com.example.avisadordincivisme.ui.home
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.avisadordincivismekt.databinding.FragmentHomeBinding
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +53,18 @@ class HomeFragment : Fragment() {
         binding.buttonLocation.setOnClickListener {
             Log.d("DEBUG", "Clicked Get Location")
             sharedViewModel.switchTrackingLocation()
+        }
+
+
+        signInLauncher = registerForActivityResult(
+            FirebaseAuthUIActivityResultContract()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+                if (user != null) {
+                    sharedViewModel.setUser(user)
+                }
+            }
         }
 
         return root

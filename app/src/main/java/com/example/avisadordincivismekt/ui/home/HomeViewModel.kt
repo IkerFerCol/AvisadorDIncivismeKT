@@ -1,21 +1,29 @@
 package com.example.avisadordincivisme.ui.home
+
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.app.Application
+import android.content.Intent
 import android.location.Geocoder
 import android.location.Location
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import java.io.IOException
 import java.util.Locale
 import java.util.concurrent.Executors
+
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -25,6 +33,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val checkPermission = MutableLiveData<String>()
     private val buttonText = MutableLiveData<String>()
     private val progressBar = MutableLiveData<Boolean>()
+    private val user = MutableLiveData<FirebaseUser>()
+
 
     private var mTrackingLocation: Boolean = false
     private var mFusedLocationClient: FusedLocationProviderClient? = null
@@ -37,18 +47,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+
     fun setFusedLocationClient(client: FusedLocationProviderClient) {
         mFusedLocationClient = client
     }
 
     fun getCurrentAddress(): LiveData<String> = currentAddress
-
     fun getButtonText(): LiveData<String> = buttonText
-
     fun getProgressBar(): LiveData<Boolean> = progressBar
-
     fun getCheckPermission(): LiveData<String> = checkPermission
-
     private fun getLocationRequest(): LocationRequest {
         return LocationRequest.create().apply {
             interval = 10000
@@ -70,7 +77,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         if (needsChecking) {
             checkPermission.postValue("listo")
         } else {
-            mFusedLocationClient?.requestLocationUpdates(getLocationRequest(), mLocationCallback, null)
+            mFusedLocationClient?.requestLocationUpdates(
+                getLocationRequest(),
+                mLocationCallback,
+                null
+            )
             currentAddress.postValue("Carregant...")
             progressBar.postValue(true)
             mTrackingLocation = true
@@ -102,7 +113,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     Log.e("INCIVISME", resultMessage)
                 } else {
                     val address = addresses[0]
-                    val addressParts = (0..address.maxAddressLineIndex).map { address.getAddressLine(it) }
+                    val addressParts =
+                        (0..address.maxAddressLineIndex).map { address.getAddressLine(it) }
                     resultMessage = addressParts.joinToString("\n")
                     val finalResultMessage = resultMessage
                     handler.post {
@@ -126,6 +138,16 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+
+    fun getUser(): LiveData<FirebaseUser> {
+        return user
+    }
+
+    fun setUser(passedUser: FirebaseUser) {
+        user.postValue(passedUser)
+    }
+
 
     fun get(java: Class<HomeViewModel>) {
 

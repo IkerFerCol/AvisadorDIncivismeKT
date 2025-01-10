@@ -1,30 +1,35 @@
 package com.example.avisadordincivismekt
 
+import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.example.avisadordincivisme.ui.home.HomeViewModel
 import com.example.avisadordincivismekt.databinding.ActivityMainBinding
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.AuthUI.IdpConfig.EmailBuilder
+import com.firebase.ui.auth.AuthUI.IdpConfig.GoogleBuilder
 import com.google.android.gms.location.LocationServices
-import android.Manifest
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import java.util.Arrays
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var locationPermissionRequest: ActivityResultLauncher<Array<String>>
     private lateinit var sharedViewModel: HomeViewModel
+    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                 else -> Toast.makeText(this, "No concedeixen permisos", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     private fun checkPermission() {
@@ -72,4 +78,30 @@ class MainActivity : AppCompatActivity() {
             sharedViewModel.startTrackingLocation(false)
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+
+        val auth = FirebaseAuth.getInstance()
+        Log.e("XXXX", auth.currentUser.toString())
+        if (auth.currentUser == null) {
+            val signInIntent =
+                AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setIsSmartLockEnabled(false)
+                    .setAvailableProviders(
+                        Arrays.asList(
+                            EmailBuilder().build(),
+                            GoogleBuilder().build()
+                        )
+                    )
+                    .build()
+            signInLauncher.launch(signInIntent)
+        } else {
+            sharedViewModel.setUser(auth.currentUser!!)
+        }
+    }
+
+
+
 }
