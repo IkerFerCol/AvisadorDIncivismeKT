@@ -1,24 +1,20 @@
-package com.example.avisadordincivisme.ui.home
+package com.example.avisadordincivismekt.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
 import android.app.Application
-import android.content.Intent
 import android.location.Geocoder
 import android.location.Location
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseUser
 import java.io.IOException
 import java.util.Locale
@@ -34,6 +30,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val buttonText = MutableLiveData<String>()
     private val progressBar = MutableLiveData<Boolean>()
     private val user = MutableLiveData<FirebaseUser>()
+    private val currentLatLng = MutableLiveData<LatLng>()
 
 
     private var mTrackingLocation: Boolean = false
@@ -45,6 +42,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 fetchAddress(location)
             }
         }
+    }
+
+    fun getcurrentLatLng(): MutableLiveData<LatLng> {
+        return currentLatLng
     }
 
 
@@ -107,6 +108,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             var resultMessage = ""
 
             try {
+                val latlng = LatLng(location.latitude, location.longitude)
+                currentLatLng.postValue(latlng)
                 val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                 if (addresses.isNullOrEmpty()) {
                     resultMessage = "No se encontro na"

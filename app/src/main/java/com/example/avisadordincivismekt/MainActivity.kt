@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import com.example.avisadordincivisme.ui.home.HomeViewModel
+import com.example.avisadordincivismekt.ui.HomeViewModel
 import com.example.avisadordincivismekt.databinding.ActivityMainBinding
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.AuthUI.IdpConfig.EmailBuilder

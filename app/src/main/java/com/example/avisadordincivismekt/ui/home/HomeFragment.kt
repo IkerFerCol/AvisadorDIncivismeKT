@@ -1,6 +1,5 @@
 package com.example.avisadordincivisme.ui.home
 
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.avisadordincivismekt.databinding.FragmentHomeBinding
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.google.firebase.auth.FirebaseAuth
+import com.example.avisadordincivismekt.ui.HomeViewModel
 import com.google.firebase.auth.FirebaseUser
 
 
@@ -21,7 +19,7 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
+    private var authUser: FirebaseUser? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +46,9 @@ class HomeFragment : Fragment() {
 
         sharedViewModel.getProgressBar().observe(viewLifecycleOwner) { visible ->
             binding.loading.visibility = if (visible) View.VISIBLE else View.INVISIBLE
+        }
+        sharedViewModel.getUser().observe(viewLifecycleOwner) { user ->
+            authUser = user
         }
 
         binding.buttonLocation.setOnClickListener {
