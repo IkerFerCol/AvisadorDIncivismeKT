@@ -56,16 +56,7 @@ class HomeFragment : Fragment() {
         }
 
 
-        signInLauncher = registerForActivityResult(
-            FirebaseAuthUIActivityResultContract()
-        ) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
-                if (user != null) {
-                    sharedViewModel.setUser(user)
-                }
-            }
-        }
+
 
         return root
     }

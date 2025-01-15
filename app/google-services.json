@@ -12,7 +12,12 @@
           "package_name": "com.example.avisadordincivismekt"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "560253626390-ij3k08i9qjdcrbhjthgudh1tfutdpo7l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAsbswEGrlur3g50P05-y-Fdf96dXLBx7g"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "560253626390-ij3k08i9qjdcrbhjthgudh1tfutdpo7l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -19,6 +19,8 @@ import com.example.avisadordincivismekt.databinding.ActivityMainBinding
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.AuthUI.IdpConfig.EmailBuilder
 import com.firebase.ui.auth.AuthUI.IdpConfig.GoogleBuilder
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -61,6 +63,14 @@ class MainActivity : AppCompatActivity() {
                 fineLocationGranted -> sharedViewModel.startTrackingLocation(false)
                 coarseLocationGranted -> sharedViewModel.startTrackingLocation(false)
                 else -> Toast.makeText(this, "No concedeixen permisos", Toast.LENGTH_SHORT).show()
+            }
+        }
+        signInLauncher = registerForActivityResult(
+            FirebaseAuthUIActivityResultContract()
+        ) { result: FirebaseAuthUIAuthenticationResult ->
+            if (result.resultCode == RESULT_OK) {
+                val user = FirebaseAuth.getInstance().currentUser
+                sharedViewModel.setUser(user!!)
             }
         }
 
