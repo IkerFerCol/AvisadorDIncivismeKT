@@ -1,18 +1,19 @@
 package com.example.avisadordincivisme.ui.home
 
-import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.avisadordincivismekt.Incidencia
 import com.example.avisadordincivismekt.databinding.FragmentHomeBinding
 import com.example.avisadordincivismekt.ui.HomeViewModel
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 
 
 class HomeFragment : Fragment() {
@@ -34,24 +35,32 @@ class HomeFragment : Fragment() {
         val sharedViewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
 
         sharedViewModel.getCurrentAddress().observe(viewLifecycleOwner) { address ->
-            binding.localitzacio.text = String.format(
-                "Direcció: %1\$s \n Hora: %2\$tr",
-                address, System.currentTimeMillis()
+            binding.txtDireccio.text = Editable.Factory.getInstance().newEditable(
+                String.format(
+                    "Direcció: %1\$s \n Hora: %2\$tr",
+                    address.toString(), System.currentTimeMillis()
+                )
             )
         }
 
-        sharedViewModel.getButtonText().observe(viewLifecycleOwner) { text ->
-            binding.buttonLocation.text = text
+        sharedViewModel.getcurrentLatLng().observe(viewLifecycleOwner) { latlng ->
+            binding.txtLatitud.setText(java.lang.String.valueOf(latlng.latitude))
+            binding.txtLongitud.setText(java.lang.String.valueOf(latlng.longitude))
         }
 
-        sharedViewModel.getProgressBar().observe(viewLifecycleOwner) { visible ->
-            binding.loading.visibility = if (visible) View.VISIBLE else View.INVISIBLE
+
+
+        sharedViewModel.getProgressBar().observe(
+            viewLifecycleOwner
+        ) { visible: Boolean ->
+            if (visible) binding.loading.visibility = ProgressBar.VISIBLE
+            else binding.loading.visibility = ProgressBar.INVISIBLE
         }
         sharedViewModel.getUser().observe(viewLifecycleOwner) { user ->
             authUser = user
         }
 
-        binding.buttonLocation.setOnClickListener {
+        binding.buttonNotificar.setOnClickListener {
             Log.d("DEBUG", "Clicked Get Location")
             sharedViewModel.switchTrackingLocation()
         }
