@@ -60,10 +60,44 @@ class HomeFragment : Fragment() {
             authUser = user
         }
 
+        sharedViewModel.switchTrackingLocation()
+
         binding.buttonNotificar.setOnClickListener {
-            Log.d("DEBUG", "Clicked Get Location")
-            sharedViewModel.switchTrackingLocation()
+            val incidencia = Incidencia().apply {
+                direccio = binding.txtDireccio.text.toString()
+                latitud = binding.txtLatitud.text.toString()
+                longitud = binding.txtLongitud.text.toString()
+                problema = binding.txtDescripcio.text.toString()
+            }
+
+            Log.d("HomeFragment", "Dirección: ${incidencia.direccio}")
+            Log.d("HomeFragment", "Latitud: ${incidencia.latitud}")
+            Log.d("HomeFragment", "Longitud: ${incidencia.longitud}")
+            Log.d("HomeFragment", "Problema: ${incidencia.problema}")
+
+            if (incidencia.direccio!!.isNotEmpty() && incidencia.latitud!!.isNotEmpty() && incidencia.longitud!!.isNotEmpty() && incidencia.problema!!.isNotEmpty()) {
+                val database = FirebaseDatabase.getInstance("https://avisadord-incivismektikerfer-default-rtdb.europe-west1.firebasedatabase.app")
+                val reference = database.reference
+
+                val users = reference.child("users")
+                val uid = users.child(authUser?.uid ?: "")
+                val incidencies = uid.child("incidencies")
+
+                val referencePush = incidencies.push()
+                referencePush.setValue(incidencia).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("HomeFragment", "Incidencia enviada correctamente")
+                    } else {
+                        Log.e("HomeFragment", "Error al enviar la incidencia", task.exception)
+                    }
+                }
+            } else {
+                Log.e("HomeFragment", "Algunos campos están vacíos. No se puede enviar la incidencia.")
+            }
         }
+
+
+
 
 
 
