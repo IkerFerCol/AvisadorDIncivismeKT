@@ -27,7 +27,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -78,7 +78,6 @@ class HomeFragment : Fragment() {
             if (incidencia.direccio!!.isNotEmpty() && incidencia.latitud!!.isNotEmpty() && incidencia.longitud!!.isNotEmpty() && incidencia.problema!!.isNotEmpty()) {
                 val database = FirebaseDatabase.getInstance("https://avisadord-incivismektikerfer-default-rtdb.europe-west1.firebasedatabase.app")
                 val reference = database.reference
-
                 val users = reference.child("users")
                 val uid = users.child(authUser?.uid ?: "")
                 val incidencies = uid.child("incidencies")
@@ -92,16 +91,12 @@ class HomeFragment : Fragment() {
                     }
                 }
             } else {
-                Log.e("HomeFragment", "Algunos campos están vacíos. No se puede enviar la incidencia.")
+                Log.e(
+                    "HomeFragment",
+                    "Algunos campos están vacíos. No se puede enviar la incidencia."
+                )
             }
         }
-
-
-
-
-
-
-
         return root
     }
 

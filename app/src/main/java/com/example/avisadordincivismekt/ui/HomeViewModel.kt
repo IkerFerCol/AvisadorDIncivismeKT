@@ -29,7 +29,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val checkPermission = MutableLiveData<String>()
     private val buttonText = MutableLiveData<String>()
     private val progressBar = MutableLiveData<Boolean>()
-    private val user = MutableLiveData<FirebaseUser>()
+    val user = MutableLiveData<FirebaseUser>()
     private val currentLatLng = MutableLiveData<LatLng>()
 
 

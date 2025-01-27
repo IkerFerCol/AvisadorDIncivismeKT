@@ -61,5 +61,7 @@ dependencies {
     implementation("com.firebaseui:firebase-ui-database:8.0.2")
     implementation("com.github.bumptech.glide:glide:4.14.2")
     implementation("com.google.firebase:firebase-appcheck:18.0.0")
+    implementation("org.osmdroid:osmdroid-android:6.1.14")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
 
 }
