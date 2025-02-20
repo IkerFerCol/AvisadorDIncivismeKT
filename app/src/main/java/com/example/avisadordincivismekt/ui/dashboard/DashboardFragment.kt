@@ -1,5 +1,6 @@
 package com.example.avisadordincivismekt.ui.dashboard
 
+import Incidencia
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.avisadordincivismekt.Incidencia
+
 import com.example.avisadordincivismekt.databinding.FragmentDashboardBinding
 import com.example.avisadordincivismekt.databinding.RvIncidenciesItemBinding
 import com.example.avisadordincivismekt.ui.HomeViewModel

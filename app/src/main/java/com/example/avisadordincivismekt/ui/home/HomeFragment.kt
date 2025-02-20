@@ -1,5 +1,6 @@
 package com.example.avisadordincivisme.ui.home
 
+import Incidencia
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -9,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.avisadordincivismekt.Incidencia
 import com.example.avisadordincivismekt.databinding.FragmentHomeBinding
 import com.example.avisadordincivismekt.ui.HomeViewModel
 import com.google.firebase.auth.FirebaseUser
