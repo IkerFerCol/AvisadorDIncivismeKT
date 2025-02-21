@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.avisadordincivismekt"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.avisadordincivismekt"
@@ -55,7 +55,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.firebase:firebase-auth:23.2.0")
+    implementation("com.google.firebase:firebase-auth:23.1.0")
     implementation("com.google.firebase:firebase-database:21.0.0")
     implementation("com.firebaseui:firebase-ui-auth:8.0.2")
     implementation("com.firebaseui:firebase-ui-database:8.0.2")
@@ -63,5 +63,6 @@ dependencies {
     implementation("com.google.firebase:firebase-appcheck:18.0.0")
     implementation("org.osmdroid:osmdroid-android:6.1.14")
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+
 
 }

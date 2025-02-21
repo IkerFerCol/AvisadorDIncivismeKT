@@ -1,19 +1,33 @@
-package com.example.avisadordincivisme.ui.home
+package com.example.avisadordincivismekt.ui.home
 
 import Incidencia
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.avisadordincivismekt.databinding.FragmentHomeBinding
 import com.example.avisadordincivismekt.ui.HomeViewModel
+import com.example.avisadordincivismekt.ui.notifications.NotificationsFragment.Companion.REQUEST_TAKE_PHOTO
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class HomeFragment : Fragment() {
@@ -21,6 +35,8 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var authUser: FirebaseUser? = null
+    private var mCurrentPhotoPath: String? = null
+    private var photoURI: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,6 +47,8 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+
 
         val sharedViewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
 
@@ -97,7 +115,65 @@ class HomeFragment : Fragment() {
                 )
             }
         }
+
+        binding.buttonFoto.setOnClickListener {
+            Log.d("XXX", "foto")
+            dispatchTakePictureIntent()
+
+        }
+
         return root
+    }
+
+
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        Log.d("XXX", context?.packageManager?.let { takePictureIntent.resolveActivity(it) }.toString())
+        if (context?.packageManager?.let { takePictureIntent.resolveActivity(it) } != null) {
+            Log.d("XXX", "Caba es marica")
+            var photoFile: File? = null
+            try {
+                photoFile = createImagenFile()
+            } catch (ex: IOException) {
+
+                ex.printStackTrace()
+            }
+
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.example.android.fileprovider",
+                    photoFile
+                )
+                Log.d("XXX","CABA ES GAY")
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+            }
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_TAKE_PHOTO) {
+            if (resultCode == Activity.RESULT_OK) {
+                Glide.with(this).load(photoURI).into(binding!!.cross)
+            } else {
+                Toast.makeText(context, "La foto no esta hecha", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    private fun createImagenFile(): File {
+        val timestamp: String =
+            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        Log.d("XXX","CABA ES GAY2")
+        val imageFileName = "JPEG_${timestamp}_"
+        val storageDir: File? = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val image: File = File.createTempFile(
+            imageFileName,
+            "jpg",
+            storageDir
+
+        )
+        mCurrentPhotoPath = image.absolutePath
+        return image
     }
 
     override fun onDestroyView() {
